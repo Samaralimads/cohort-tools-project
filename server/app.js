@@ -13,7 +13,7 @@ const mongoose = require("mongoose");
 const app = express();
 
 mongoose
-  .connect("mongodb://127.0.0.1:27017/cohorts-tools-api")
+  .connect("mongodb://127.0.0.1:27017/cohort-tools-api")
   .then((x) => console.log(`Connected to Database: "${x.connections[0].name}"`))
   .catch((err) => console.error("Error connecting to MongoDB", err));
 
@@ -39,6 +39,7 @@ app.get("/docs", (req, res) => {
 app.get("/api/cohorts", (req, res) => {
   Cohort.find({})
     .then((cohorts) => {
+      console.log("Cohorts:", cohorts);
       res.json(cohorts);
     })
     .catch((error) => {
