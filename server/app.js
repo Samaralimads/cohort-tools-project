@@ -13,12 +13,12 @@ const mongoose = require("mongoose");
 const app = express();
 
 mongoose
-  .connect("mongodb://127.0.0.1:27017/mongoose-example-dev")
+  .connect("mongodb://127.0.0.1:27017/cohorts-tools-api")
   .then((x) => console.log(`Connected to Database: "${x.connections[0].name}"`))
   .catch((err) => console.error("Error connecting to MongoDB", err));
 
-const cohorts = require("./cohorts.json");
-const students = require("./students.json");
+const cohorts = require("./models/Cohort.model");
+const students = require("./models/Student.model");
 
 // MIDDLEWARE
 app.use(cors({ origin: ["http://localhost:5173"] }));
