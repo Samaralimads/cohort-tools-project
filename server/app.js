@@ -17,8 +17,8 @@ mongoose
   .then((x) => console.log(`Connected to Database: "${x.connections[0].name}"`))
   .catch((err) => console.error("Error connecting to MongoDB", err));
 
-const cohorts = require("./models/Cohort.model");
-const students = require("./models/Student.model");
+const Cohort = require("./models/Cohort.model");
+const Student = require("./models/Student.model");
 
 // MIDDLEWARE
 app.use(cors({ origin: ["http://localhost:5173"] }));
@@ -37,11 +37,23 @@ app.get("/docs", (req, res) => {
 });
 
 app.get("/api/cohorts", (req, res) => {
-  res.json(cohorts);
+  Cohort.find({})
+    .then((cohorts) => {
+      res.json(cohorts);
+    })
+    .catch((error) => {
+      res.status(500).send({ error: "Failed to retrieve cohorts" });
+    });
 });
 
 app.get("/api/students", (req, res) => {
-  res.json(students);
+  Student.find({})
+    .then((students) => {
+      res.json(students);
+    })
+    .catch((error) => {
+      res.status(500).send({ error: "Failed to retrieve students" });
+    });
 });
 
 // START SERVER
