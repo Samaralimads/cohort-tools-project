@@ -140,16 +140,14 @@ app.get("/api/students", (req, res) => {
 app.get("/api/students/cohort/:cohortId", async (req, res, next) => {
   try {
     const studentsByCohort = await Student.find({
-      cohort: req.params.id,
+      cohort: req.params.cohortId,
     });
     res.status(200).json(studentsByCohort);
   } catch (error) {
-    res
-      .status(500)
-      .json({
-        message: "Cannot get the students of this cohort",
-        error: error.message,
-      });
+    res.status(500).json({
+      message: "Cannot get the students of this cohort",
+      error: error.message,
+    });
   }
 });
 
