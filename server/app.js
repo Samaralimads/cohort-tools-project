@@ -47,6 +47,52 @@ app.get("/api/cohorts", (req, res) => {
     });
 });
 
+app.get("/api/cohorts/:cohortId", async (req, res, next) => {
+  try {
+    const { cohortId } = req.params;
+    const oneCohort = await Cohort.findById(cohortId);
+    res.status(200).json(oneCohort);
+  } catch (error) {
+    res.status(500).send({ error: "Failed to retrieve one cohort" });
+  }
+});
+
+app.post("/api/cohorts", async (req, res, next) => {
+  try {
+    const inProgress = req.body.inProgress;
+    const cohortSlug = req.body.cohortSlug;
+    const cohortName = req.body.cohortName;
+    const program = req.body.program;
+    const campus = req.body.campus;
+    const startDate = req.body.startDate;
+    const endDate = req.body.endDate;
+    const programManager = req.body.programManager;
+    const leadTeacher = req.body.leadTeacher;
+    const totalHours = req.body.totalHours;
+
+    const cohortToAdd = {
+      inProgress,
+      cohortSlug,
+      cohortName,
+      program,
+      campus,
+      startDate,
+      endDate,
+      programManager,
+      leadTeacher,
+      totalHours,
+    };
+    await Cohort.create(cohortToAdd);
+    res.status(201).json({
+      message: "Success - Cohort created",
+    });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: "Cannot create cohort", error: error.message });
+  }
+});
+
 app.get("/api/students", (req, res) => {
   Student.find({})
     .then((students) => {
