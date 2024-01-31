@@ -161,6 +161,37 @@ app.get("/api/students/:studentId", async (req, res, next) => {
   }
 });
 
+//Updates the specified student by id
+app.put("/api/students/studentId", async (req, res, next) => {
+  try {
+    const updatedStudent = await Student.findByIdAndUpdate(
+      req.params.studentId,
+      req.body,
+      {
+        new: true,
+      }
+    );
+    res.status(200).json(updatedStudent);
+  } catch (error) {
+    res.status(500).json({
+      message: "Error while updating a single student",
+      error: error.message,
+    });
+  }
+});
+
+//Deletes the specified cohort by id
+app.delete("/api/students/studentId", async (req, res, next) => {
+  try {
+    await Student.findByIdAndDelete(req.params.studentId);
+    res.sendStatus(204);
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: "Cannot delete this student", error: error.message });
+  }
+});
+
 // START SERVER
 app.listen(PORT, () => {
   console.log(`Server listening on port ${PORT}`);
