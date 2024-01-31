@@ -151,6 +151,16 @@ app.get("/api/students/cohort/:cohortId", async (req, res, next) => {
   }
 });
 
+//returns the specified student by id
+app.get("/api/students/:studentId", async (req, res, next) => {
+  try {
+    const oneStudent = await Student.findById(req.params.studentId);
+    res.status(200).json(oneStudent);
+  } catch (error) {
+    res.status(500).send({ error: "Failed to retrieve one student" });
+  }
+});
+
 // START SERVER
 app.listen(PORT, () => {
   console.log(`Server listening on port ${PORT}`);
