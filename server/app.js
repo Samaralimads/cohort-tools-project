@@ -97,6 +97,20 @@ app.post("/api/cohorts", async (req, res, next) => {
 });
 
 //updates the specified cohort by Id
+app.put("/api/cohorts/:cohortId", async (req, res, next) => {
+  try {
+    const { cohortId } = req.params;
+    const updatedCohort = await Cohort.findByIdAndUpdate(cohortId, req.body, {
+      new: true,
+    });
+    res.status(200).json(updatedCohort);
+  } catch (error) {
+    res.status(500).json({
+      message: "Error while updating a single cohort",
+      error: error.message,
+    });
+  }
+});
 
 //deletes the specified cohort by Id
 app.delete("/api/cohorts/:cohortId", async (req, res, next) => {
