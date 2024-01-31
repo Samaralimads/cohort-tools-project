@@ -102,7 +102,7 @@ app.post("/api/cohorts", async (req, res, next) => {
 app.delete("/api/cohorts/:cohortId", async (req, res, next) => {
   try {
     const { cohortId } = req.params;
-    await Cohort.findByIdAndDelete(id);
+    await Cohort.findByIdAndDelete(cohortId);
     res.sendStatus(204);
   } catch (error) {
     res
