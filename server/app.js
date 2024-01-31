@@ -36,6 +36,7 @@ app.get("/docs", (req, res) => {
   res.sendFile(__dirname + "/views/docs.html");
 });
 
+//returns all cohorts
 app.get("/api/cohorts", (req, res) => {
   Cohort.find({})
     .then((cohorts) => {
@@ -47,6 +48,7 @@ app.get("/api/cohorts", (req, res) => {
     });
 });
 
+//returns the specified cohort by id
 app.get("/api/cohorts/:cohortId", async (req, res, next) => {
   try {
     const { cohortId } = req.params;
@@ -57,6 +59,7 @@ app.get("/api/cohorts/:cohortId", async (req, res, next) => {
   }
 });
 
+//creates a new cohort
 app.post("/api/cohorts", async (req, res, next) => {
   try {
     const inProgress = req.body.inProgress;
@@ -90,6 +93,21 @@ app.post("/api/cohorts", async (req, res, next) => {
     res
       .status(500)
       .json({ message: "Cannot create cohort", error: error.message });
+  }
+});
+
+//updates the specified cohort by Id
+
+//deletes the specified cohort by Id
+app.delete("/api/cohorts/:cohortId", async (req, res, next) => {
+  try {
+    const { cohortId } = req.params;
+    await Cohort.findByIdAndDelete(id);
+    res.sendStatus(204);
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: "Cannot delete this cohort", error: error.message });
   }
 });
 
