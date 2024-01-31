@@ -125,6 +125,7 @@ app.delete("/api/cohorts/:cohortId", async (req, res, next) => {
   }
 });
 
+//returns all students
 app.get("/api/students", (req, res) => {
   Student.find({})
     .then((students) => {
@@ -133,6 +134,23 @@ app.get("/api/students", (req, res) => {
     .catch((error) => {
       res.status(500).send({ error: "Failed to retrieve students" });
     });
+});
+
+//returns all the students of a specified cohort
+app.get("/api/students/cohort/:cohortId", async (req, res, next) => {
+  try {
+    const studentsByCohort = await Student.find({
+      cohort: req.params.id,
+    });
+    res.status(200).json(studentsByCohort);
+  } catch (error) {
+    res
+      .status(500)
+      .json({
+        message: "Cannot get the students of this cohort",
+        error: error.message,
+      });
+  }
 });
 
 // START SERVER
