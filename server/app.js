@@ -161,6 +161,9 @@ app.get("/api/students/:studentId", async (req, res, next) => {
   }
 });
 
+//Creates a new student with their respective cohort id
+//@SAMARA : this is where the research part with the populate thing may be helpful.
+
 //Updates the specified student by id
 app.put("/api/students/studentId", async (req, res, next) => {
   try {
