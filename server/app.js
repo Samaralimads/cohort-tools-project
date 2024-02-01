@@ -5,6 +5,10 @@ const PORT = 5005;
 const cors = require("cors");
 const mongoose = require("mongoose");
 const helmet = require("helmet");
+const {
+  notFoundHandler,
+  errorHandler,
+} = require("./middleware/error-handling");
 
 // STATIC DATA
 // Devs Team - Import the provided files with JSON data of students and cohorts here:
@@ -28,6 +32,8 @@ app.use(morgan("dev"));
 app.use(express.static("public"));
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
+app.use(notFoundHandler);
+app.use(errorHandler);
 
 // ROUTES - https://expressjs.com/en/starter/basic-routing.html
 // Devs Team - Start working on the routes here:
@@ -47,7 +53,7 @@ app.get("/api/cohorts", (req, res) => {
       res.json(cohorts);
     })
     .catch((error) => {
-      res.status(500).send({ error: "Failed to retrieve cohorts" });
+      next(error);
     });
 });
 
@@ -93,9 +99,7 @@ app.post("/api/cohorts", async (req, res, next) => {
       message: "Success - Cohort created",
     });
   } catch (error) {
-    res
-      .status(500)
-      .json({ message: "Cannot create cohort", error: error.message });
+    next(error);
   }
 });
 
@@ -108,10 +112,7 @@ app.put("/api/cohorts/:cohortId", async (req, res, next) => {
     });
     res.status(200).json(updatedCohort);
   } catch (error) {
-    res.status(500).json({
-      message: "Error while updating a single cohort",
-      error: error.message,
-    });
+    next(error);
   }
 });
 
@@ -122,9 +123,7 @@ app.delete("/api/cohorts/:cohortId", async (req, res, next) => {
     await Cohort.findByIdAndDelete(cohortId);
     res.sendStatus(204);
   } catch (error) {
-    res
-      .status(500)
-      .json({ message: "Cannot delete this cohort", error: error.message });
+    next(error);
   }
 });
 
@@ -137,7 +136,7 @@ app.get("/api/students", (req, res) => {
       res.json(students);
     })
     .catch((error) => {
-      res.status(500).send({ error: "Failed to retrieve students" });
+      next(error);
     });
 });
 
@@ -149,10 +148,7 @@ app.get("/api/students/cohort/:cohortId", async (req, res, next) => {
     }).populate("cohort");
     res.status(200).json(studentsByCohort);
   } catch (error) {
-    res.status(500).json({
-      message: "Cannot get the students of this cohort",
-      error: error.message,
-    });
+    next(error);
   }
 });
 
@@ -165,7 +161,7 @@ app.get("/api/students/:studentId", async (req, res, next) => {
 
     res.status(200).json(oneStudent);
   } catch (error) {
-    res.status(500).send({ error: "Failed to retrieve one student" });
+    next(error);
   }
 });
 
@@ -202,9 +198,7 @@ app.post("/api/students", async (req, res) => {
       message: "Success - Student created",
     });
   } catch (error) {
-    res
-      .status(500)
-      .json({ message: "Cannot create student", error: error.message });
+    next(error);
   }
 });
 
@@ -220,10 +214,7 @@ app.put("/api/students/:studentId", async (req, res, next) => {
     );
     res.status(200).json(updatedStudent);
   } catch (error) {
-    res.status(500).json({
-      message: "Error while updating a single student",
-      error: error.message,
-    });
+    next(error);
   }
 });
 
@@ -233,9 +224,7 @@ app.delete("/api/students/:studentId", async (req, res, next) => {
     await Student.findByIdAndDelete(req.params.studentId);
     res.sendStatus(204);
   } catch (error) {
-    res
-      .status(500)
-      .json({ message: "Cannot delete this student", error: error.message });
+    next(error);
   }
 });
 
