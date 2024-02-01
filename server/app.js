@@ -4,6 +4,7 @@ const cookieParser = require("cookie-parser");
 const PORT = 5005;
 const cors = require("cors");
 const mongoose = require("mongoose");
+const helmet = require("helmet");
 
 // STATIC DATA
 // Devs Team - Import the provided files with JSON data of students and cohorts here:
@@ -21,8 +22,8 @@ const Cohort = require("./models/Cohort.model");
 const Student = require("./models/Student.model");
 
 // MIDDLEWARE
+app.use(helmet());
 app.use(cors({ origin: ["http://localhost:5173"] }));
-// ...
 app.use(express.json());
 app.use(morgan("dev"));
 app.use(express.static("public"));
@@ -128,6 +129,7 @@ app.delete("/api/cohorts/:cohortId", async (req, res, next) => {
 //returns all students
 app.get("/api/students", (req, res) => {
   Student.find({})
+    .populate("cohort")
     .then((students) => {
       res.json(students);
     })
@@ -135,13 +137,12 @@ app.get("/api/students", (req, res) => {
       res.status(500).send({ error: "Failed to retrieve students" });
     });
 });
-
 //returns all the students of a specified cohort
 app.get("/api/students/cohort/:cohortId", async (req, res, next) => {
   try {
     const studentsByCohort = await Student.find({
       cohort: req.params.cohortId,
-    });
+    }).populate("cohort");
     res.status(200).json(studentsByCohort);
   } catch (error) {
     res.status(500).json({
