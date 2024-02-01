@@ -209,7 +209,7 @@ app.post("/api/students", async (req, res) => {
 });
 
 //Updates the specified student by id
-app.put("/api/students/studentId", async (req, res, next) => {
+app.put("/api/students/:studentId", async (req, res, next) => {
   try {
     const updatedStudent = await Student.findByIdAndUpdate(
       req.params.studentId,
@@ -228,7 +228,7 @@ app.put("/api/students/studentId", async (req, res, next) => {
 });
 
 //Deletes the specified student by id
-app.delete("/api/students/studentId", async (req, res, next) => {
+app.delete("/api/students/:studentId", async (req, res, next) => {
   try {
     await Student.findByIdAndDelete(req.params.studentId);
     res.sendStatus(204);
