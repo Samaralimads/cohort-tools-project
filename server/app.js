@@ -9,6 +9,8 @@ const helmet = require("helmet");
 // STATIC DATA
 // Devs Team - Import the provided files with JSON data of students and cohorts here:
 // ...
+const Cohort = require("./models/Cohort.model");
+const Student = require("./models/Student.model");
 
 // INITIALIZE EXPRESS APP - https://expressjs.com/en/4x/api.html#express
 const app = express();
@@ -17,9 +19,6 @@ mongoose
   .connect("mongodb://127.0.0.1:27017/cohort-tools-api")
   .then((x) => console.log(`Connected to Database: "${x.connections[0].name}"`))
   .catch((err) => console.error("Error connecting to MongoDB", err));
-
-const Cohort = require("./models/Cohort.model");
-const Student = require("./models/Student.model");
 
 // MIDDLEWARE
 app.use(helmet());
@@ -33,10 +32,13 @@ app.use(cookieParser());
 // ROUTES - https://expressjs.com/en/starter/basic-routing.html
 // Devs Team - Start working on the routes here:
 // ...
+
+//
 app.get("/docs", (req, res) => {
   res.sendFile(__dirname + "/views/docs.html");
 });
 
+//COHORT ROUTES
 //returns all cohorts
 app.get("/api/cohorts", (req, res) => {
   Cohort.find({})
@@ -126,7 +128,8 @@ app.delete("/api/cohorts/:cohortId", async (req, res, next) => {
   }
 });
 
-//returns all students
+//STUDENT ROUTES
+//returns all students and their respective cohorts
 app.get("/api/students", (req, res) => {
   Student.find({})
     .populate("cohort")
@@ -137,6 +140,7 @@ app.get("/api/students", (req, res) => {
       res.status(500).send({ error: "Failed to retrieve students" });
     });
 });
+
 //returns all the students of a specified cohort
 app.get("/api/students/cohort/:cohortId", async (req, res, next) => {
   try {
@@ -155,7 +159,10 @@ app.get("/api/students/cohort/:cohortId", async (req, res, next) => {
 //returns the specified student by id
 app.get("/api/students/:studentId", async (req, res, next) => {
   try {
-    const oneStudent = await Student.findById(req.params.studentId);
+    const oneStudent = await Student.findById(req.params.studentId).populate(
+      "cohort"
+    );
+
     res.status(200).json(oneStudent);
   } catch (error) {
     res.status(500).send({ error: "Failed to retrieve one student" });
@@ -163,7 +170,43 @@ app.get("/api/students/:studentId", async (req, res, next) => {
 });
 
 //Creates a new student with their respective cohort id
-//@SAMARA : this is where the research part with the populate thing may be helpful.
+app.post("/api/students", async (req, res) => {
+  try {
+    const {
+      firstName,
+      lastName,
+      email,
+      phone,
+      linkedinUrl,
+      languages,
+      program,
+      background,
+      image,
+      cohortId,
+    } = req.body;
+
+    const newStudent = new Student({
+      firstName,
+      lastName,
+      email,
+      phone,
+      linkedinUrl,
+      languages,
+      program,
+      background,
+      image,
+      cohort: cohortId,
+    });
+    await Student.create(newStudent);
+    res.status(201).json({
+      message: "Success - Student created",
+    });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: "Cannot create student", error: error.message });
+  }
+});
 
 //Updates the specified student by id
 app.put("/api/students/studentId", async (req, res, next) => {
@@ -184,7 +227,7 @@ app.put("/api/students/studentId", async (req, res, next) => {
   }
 });
 
-//Deletes the specified cohort by id
+//Deletes the specified student by id
 app.delete("/api/students/studentId", async (req, res, next) => {
   try {
     await Student.findByIdAndDelete(req.params.studentId);
