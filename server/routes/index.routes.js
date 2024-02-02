@@ -4,6 +4,8 @@ const Student = require("../models/Student.model.js");
 
 // all routes are prefixed with /api
 
+router.use("/auth", require("./auth.routes"));
+
 router.use("/cohorts", require("./cohorts.routes.js"));
 
 router.use("/students", require("./students.routes"));
