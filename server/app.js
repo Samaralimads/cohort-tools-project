@@ -6,8 +6,8 @@ const cors = require("cors");
 const mongoose = require("mongoose");
 const helmet = require("helmet");
 const {
-  notFoundHandler,
   errorHandler,
+  notFoundHandler,
 } = require("./middleware/error-handling");
 
 // STATIC DATA
@@ -32,8 +32,8 @@ app.use(morgan("dev"));
 app.use(express.static("public"));
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(notFoundHandler);
 app.use(errorHandler);
+app.use(notFoundHandler);
 
 // ROUTES - https://expressjs.com/en/starter/basic-routing.html
 // Devs Team - Start working on the routes here:
@@ -46,15 +46,14 @@ app.get("/docs", (req, res) => {
 
 //COHORT ROUTES
 //returns all cohorts
-app.get("/api/cohorts", (req, res) => {
-  Cohort.find({})
-    .then((cohorts) => {
-      console.log("Cohorts:", cohorts);
-      res.json(cohorts);
-    })
-    .catch((error) => {
-      next(error);
-    });
+app.get("/api/cohorts", async (req, res, next) => {
+  try {
+    const cohorts = await Cohort.find({});
+    console.log("Cohorts:", cohorts);
+    res.json(cohorts);
+  } catch (error) {
+    next(error);
+  }
 });
 
 //returns the specified cohort by id
