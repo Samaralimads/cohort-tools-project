@@ -32,8 +32,6 @@ app.use(morgan("dev"));
 app.use(express.static("public"));
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(errorHandler);
-app.use(notFoundHandler);
 
 // ROUTES - https://expressjs.com/en/starter/basic-routing.html
 // Devs Team - Start working on the routes here:
@@ -226,6 +224,9 @@ app.delete("/api/students/:studentId", async (req, res, next) => {
     next(error);
   }
 });
+
+app.use(errorHandler);
+app.use(notFoundHandler);
 
 // START SERVER
 app.listen(PORT, () => {
