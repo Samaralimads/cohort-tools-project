@@ -9,8 +9,8 @@ const isAuthenticated = require("../middleware/isAuthenticated");
 // ...
 router.post("/signup", async (req, res, next) => {
   try {
-    const { username, email, password } = req.body;
-    if (!username || !email || !password) {
+    const { name, email, password } = req.body;
+    if (!name || !email || !password) {
       return res
         .status(400)
         .json({ message: "Please input all the required fields." });
@@ -22,7 +22,7 @@ router.post("/signup", async (req, res, next) => {
     }
     const hashedPassword = await bcrypt.hash(password, salt);
     const createdUser = await User.create({
-      username,
+      name,
       email,
       password: hashedPassword,
     });
@@ -45,7 +45,7 @@ router.post("/login", async (req, res, next) => {
         .json({ message: "Please input all the required fields." });
     }
     const existingUser = await User.findOne({ email }).select(
-      "password username email"
+      "password name email"
     );
     console.log(existingUser);
     if (!existingUser) {
